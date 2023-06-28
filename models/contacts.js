@@ -27,33 +27,30 @@ async function addContact(body) {
   return newContact;
 }
 
-async function removeContact(contactId) {
+const removeContact = async (contactId) => {
   const contacts = await listContacts();
-  const idx = contacts.findIndex((contact) => contact.id === contactId);
-
-  const [removeContact] = contacts.splice(idx, 1);
-  await fs.writeFile(contactsPath, JSON.stringify(contacts));
-  return console.log('Successfully deleted') || null;
-}
-
-const updateContact = async (contactId, body) => {
-  const contacts = await listContacts();
-  const { name, email, phone } = body;
-  const idx = contacts.findIndex((contact) => contact.id === contactId);
-
-  if (name || email || phone) {
-    const updatedContact = {
-      id: contactId,
-      name: name ? name : contacts[idx].name,
-      email: email ? email : contacts[idx].email,
-      phone: phone ? phone : contacts[idx].phone,
-    };
-
-    contacts[idx] = updatedContact;
-    await fs.writeFile(contactsPath, JSON.stringify(contacts), 'utf-8');
-    return updatedContact;
+  const contact = contacts.find((contact) => contact.id === contactId);
+  const index = contacts.indexOf(contact);
+  if (index === -1) {
+    return null;
   }
-  return null;
+  const [deletedContact] = contacts.splice(index, 1);
+  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+  return deletedContact;
+};
+
+const updateContact = async (contactId, data) => {
+  const contacts = await listContacts();
+  const contactIndex = contacts.findIndex(
+    (contact) => contact.id === contactId
+  );
+  if (contactIndex === -1) {
+    return null;
+  }
+  const updatedContact = { ...contacts[contactIndex], ...data };
+  contacts[contactIndex] = updatedContact;
+  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+  return updatedContact;
 };
 
 module.exports = {

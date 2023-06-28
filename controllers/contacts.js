@@ -1,4 +1,5 @@
 const contacts = require('../models/contacts');
+const { updateSchema } = require('../schemas/contacts');
 const { httpError, ctrlWrapper } = require('../utils');
 
 const listContacts = async (req, res) => {
@@ -21,24 +22,26 @@ const addContact = async (req, res) => {
   res.status(201).json(result);
 };
 
-const removeContact = async (req, res) => {
+const removeContact = async (req, res, next) => {
   const { contactId } = req.params;
-  const result = await contacts.removeContact(contactId);
-  if (!result) {
+  const data = await contacts.removeContact(contactId);
+  if (!data) {
     throw httpError(404, 'Not found');
   }
-  res.status(204).json({
-    message: 'Deleted',
-  });
+  res.json(data);
 };
 
-const updateContact = async (req, res) => {
+const updateContact = async (req, res, next) => {
   const { contactId } = req.params;
-  const result = await contacts.updateContact(contactId, req.body);
-  if (!result) {
+  const { error } = updateSchema.validate(req.body);
+  if (error) {
+    throw httpError(400, error.message);
+  }
+  const data = await contacts.updateContact(contactId, req.body);
+  if (!data) {
     throw httpError(404, 'Not found');
   }
-  res.json(result);
+  res.json(data);
 };
 
 module.exports = {
