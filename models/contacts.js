@@ -1,19 +1,40 @@
-// const fs = require('fs/promises')
+const { Schema, model } = require("mongoose");
+const Joi = require("joi");
 
-const listContacts = async () => {}
+const { handleMongooseError } = require("../helpers");
+const contactSchema = new Schema(
+  {
+    name: { type: String, required: true },
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+    },
+    phone: {
+      type: String,
+      unique: true,
+      required: true,
+      match: /^\(\d{3}\) \d{3}-\d{4}$/,
+    },
+    favorite: { type: Boolean, default: false },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+    },
+  },
+  { versionKey: false, timestamps: true }
+);
 
-const getContactById = async (contactId) => {}
-
-const removeContact = async (contactId) => {}
-
-const addContact = async (body) => {}
-
-const updateContact = async (contactId, body) => {}
-
-module.exports = {
-  listContacts,
-  getContactById,
-  removeContact,
-  addContact,
-  updateContact,
-}
+contactSchema.post("save", handleMongooseError);
+const addContactShema = Joi.object({
+  name: Joi.string().required(),
+  email: Joi.string().required(),
+  phone: Joi.string()
+    .pattern(/^\(\d{3}\) \d{3}-\d{4}$/)
+    .required(),
+  favorite: Joi.boolean(),
+});
+const updateFavoriteShema = Joi.object({ favorite: Joi.boolean().required() });
+const shemas = { addContactShema, updateFavoriteShema };
+const Contact = model("contact", contactSchema);
+module.exports = { Contact, shemas };
