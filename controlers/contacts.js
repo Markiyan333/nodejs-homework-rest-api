@@ -1,5 +1,5 @@
-const { Contact } = require("../models/contact");
-const { ctrlWrapper, HttpError } = require("../helpers");
+const { Contact } = require('../models/contact');
+const { ctrlWrapper, HttpError } = require('../helpers');
 
 const getAllContacts = async (req, res, next) => {
   const data = await Contact.find();
@@ -10,7 +10,7 @@ const getOneContactById = async (req, res, next) => {
   const { contactId } = req.params;
   const data = await Contact.findById(contactId);
   if (!data) {
-    throw HttpError(404, "Not found");
+    throw HttpError(404, 'Not found');
   }
   res.json(data);
 };
@@ -18,7 +18,7 @@ const getOneContactById = async (req, res, next) => {
 const addOneContact = async (req, res, next) => {
   const data = await Contact.create(req.body);
   if (!data) {
-    throw HttpError(404, "Not found");
+    throw HttpError(404, 'Not found');
   }
   res.status(201).json(data);
 };
@@ -27,7 +27,7 @@ const deleteContact = async (req, res, next) => {
   const { contactId } = req.params;
   const data = await Contact.findByIdAndDelete(contactId);
   if (!data) {
-    throw HttpError(404, "Not found");
+    throw HttpError(404, 'Not found');
   }
 
   res.json(data);
@@ -39,7 +39,7 @@ const updateContact = async (req, res, next) => {
     new: true,
   });
   if (!data) {
-    throw HttpError(404, "Not found");
+    throw HttpError(404, 'Not found');
   }
   res.json(data);
 };
@@ -50,7 +50,7 @@ const updateFavoriteContact = async (req, res, next) => {
     new: true,
   });
   if (!data) {
-    throw HttpError(404, "Not found");
+    throw HttpError(404, 'Not found');
   }
   res.json(data);
 };
