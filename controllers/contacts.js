@@ -1,6 +1,13 @@
 const contacts = require('../models/contacts');
-const { updateSchema } = require('../schemas/contacts');
 const { httpError, ctrlWrapper } = require('../utils');
+const isEmpty = require('lodash.isempty');
+
+const Joi = require('joi');
+const contactSchema = Joi.object({
+  name: Joi.string().required(),
+  email: Joi.string().required(),
+  phone: Joi.string().required(),
+});
 
 const listContacts = async (req, res) => {
   const result = await contacts.listContacts();
@@ -14,7 +21,7 @@ const getContactById = async (req, res) => {
   if (!result) {
     throw httpError(404, 'Not found');
   }
-  res.json({ result });
+  res.json(result);
 };
 
 const addContact = async (req, res) => {
@@ -28,14 +35,17 @@ const removeContact = async (req, res, next) => {
   if (!data) {
     throw httpError(404, 'Not found');
   }
-  res.json(data);
+  res.json({ message: 'contact deleted' });
 };
 
 const updateContact = async (req, res, next) => {
   const { contactId } = req.params;
-  const { error } = updateSchema.validate(req.body);
+  const { error } = contactSchema.validate(req.body);
   if (error) {
     throw httpError(400, error.message);
+  }
+  if (isEmpty(req.body)) {
+    throw httpError(400, 'Missing fields');
   }
   const data = await contacts.updateContact(contactId, req.body);
   if (!data) {
