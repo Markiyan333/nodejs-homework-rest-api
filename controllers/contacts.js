@@ -41,12 +41,13 @@ const removeContact = async (req, res, next) => {
 const updateContact = async (req, res, next) => {
   const { contactId } = req.params;
   const { error } = contactSchema.validate(req.body);
-  if (error) {
-    throw httpError(400, error.message);
-  }
   if (isEmpty(req.body)) {
     throw httpError(400, 'Missing fields');
   }
+  if (error) {
+    throw httpError(400, error.message);
+  }
+
   const data = await contacts.updateContact(contactId, req.body);
   if (!data) {
     throw httpError(404, 'Not found');
