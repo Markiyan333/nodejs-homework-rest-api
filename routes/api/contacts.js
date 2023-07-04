@@ -8,7 +8,7 @@ const {
   removeContact,
   updateContact,
   updateFavorite,
-} = require('../../controlers/contacts');
+} = require('../../controllers/contacts');
 
 const { validateBody, isValidId, authenticate } = require('../../middlewares');
 const { schemas } = require('../../models/contact');
