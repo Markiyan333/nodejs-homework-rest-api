@@ -1,7 +1,7 @@
-const { Schema, model } = require("mongoose");
-const Joi = require("joi");
+const { Schema, model } = require('mongoose');
+const Joi = require('joi');
 
-const { handleMongooseError } = require("../helpers");
+const { handleMongooseError } = require('../helpers');
 const contactSchema = new Schema(
   {
     name: { type: String, required: true },
@@ -21,16 +21,30 @@ const contactSchema = new Schema(
   { versionKey: false, timestamps: true }
 );
 
-contactSchema.post("save", handleMongooseError);
+contactSchema.post('save', handleMongooseError);
+
 const addContactShema = Joi.object({
-  name: Joi.string().required(),
-  email: Joi.string().required(),
+  name: Joi.string().required().messages({
+    'any.required': 'missing required name field',
+  }),
+  email: Joi.string().required().messages({
+    'any.required': 'missing required email field',
+  }),
   phone: Joi.string()
     .pattern(/^\(\d{3}\) \d{3}-\d{4}$/)
-    .required(),
+    .required()
+    .messages({
+      'any.required': 'missing required phone field',
+    }),
   favorite: Joi.boolean(),
 });
-const updateFavoriteShema = Joi.object({ favorite: Joi.boolean().required() });
+const updateFavoriteShema = Joi.object({
+  favorite: Joi.boolean()
+    .messages({
+      'any.required': 'missing required favorite field',
+    })
+    .required(),
+});
 const shemas = { addContactShema, updateFavoriteShema };
-const Contact = model("contact", contactSchema);
+const Contact = model('contact', contactSchema);
 module.exports = { Contact, shemas };
