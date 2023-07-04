@@ -1,13 +1,6 @@
 const contacts = require('../models/contacts');
 const { httpError, ctrlWrapper } = require('../utils');
-const isEmpty = require('lodash.isempty');
-
-// const Joi = require('joi');
-// const contactSchema = Joi.object({
-//   name: Joi.string().required(),
-//   email: Joi.string().required(),
-//   phone: Joi.string().required(),
-// });
+// const isEmpty = require('lodash.isempty');
 
 const listContacts = async (req, res) => {
   const result = await contacts.listContacts();
@@ -46,9 +39,9 @@ const removeContact = async (req, res, next) => {
 const updateContact = async (req, res, next) => {
   const { contactId } = req.params;
   // const { error } = contactSchema.validate(req.body);
-  if (isEmpty(req.body)) {
-    throw httpError(400, 'Missing fields');
-  }
+  // if (isEmpty(req.body)) {
+  //   throw httpError(400, 'Missing fields');
+  // }
   // if (error) {
   //   throw httpError(400, error.message);
   // }
